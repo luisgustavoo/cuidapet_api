@@ -1,4 +1,5 @@
 import 'package:cuidapet_api/application/config/database_connection_configuration.dart';
+import 'package:cuidapet_api/application/config/service_locator_config.dart';
 import 'package:cuidapet_api/application/logs/i_logger.dart';
 import 'package:cuidapet_api/application/logs/logger.dart';
 import 'package:dotenv/dotenv.dart' show load, env;
@@ -9,7 +10,10 @@ class ApplicationConfig {
     await _loadEnv();
     _loadDatabaseConfig();
     _configLogger();
+    _loadDependencies();
   }
+
+  void _loadDependencies() => configureDependencies();
 }
 
 Future<void> _loadEnv() async => load();

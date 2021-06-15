@@ -6,3 +6,4 @@ mysqldata/
 
 # Conventional directory for build output.
 build/
+/lib/application/config/service_locator_config.config.dart
