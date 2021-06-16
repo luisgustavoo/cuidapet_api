@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:cuidapet_api/application/config/application_config.dart';
+import 'package:cuidapet_api/application/middlewares/cors/cors_middleware.dart';
+import 'package:cuidapet_api/application/middlewares/default_content_type/default_content_type.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
@@ -14,7 +16,9 @@ Future<void> main(List<String> args) async {
   final result = parser.parse(args);
 
   // For Google Cloud Run, we respect the PORT environment variable
-  final portStr = int.tryParse(result['port'].toString()) ?? int.tryParse(Platform.environment['PORT'].toString()) ??  '8080';
+  final portStr = int.tryParse(result['port'].toString()) ??
+      int.tryParse(Platform.environment['PORT'].toString()) ??
+      '8080';
   final port = int.tryParse(portStr.toString());
 
   if (port == null) {
@@ -28,8 +32,9 @@ Future<void> main(List<String> args) async {
   final appConfig = ApplicationConfig();
   await appConfig.loadConfigApplication(router);
 
-
   final handler = const shelf.Pipeline()
+      .addMiddleware(CorsMiddleware().handler)
+      .addMiddleware(DefaultContentType('application/json;charset=utf-8').handler)
       .addMiddleware(shelf.logRequests())
       .addHandler(router);
 
