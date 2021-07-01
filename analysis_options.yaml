@@ -6,12 +6,14 @@
 
 include: package:strict/analysis_options.yaml
 
+# include: package:effective_dart/analysis_options.yaml
+
 # For lint rules and documentation, see http://dart-lang.github.io/linter/lints.
 
 # Uncomment to specify additional rules.
-# linter:
-#   rules:
-#     - camel_case_types
+#linter:
+#  rules:
+#    public_member_api_docs: false
 
 # analyzer:
 #   exclude:
