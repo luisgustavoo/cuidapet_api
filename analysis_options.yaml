@@ -18,3 +18,5 @@ include: package:strict/analysis_options.yaml
 # analyzer:
 #   exclude:
 #     - path/to/excluded/files/**
+analyzer:
+  exclude: [lib/**.g.dart, lib/**.config.dart]

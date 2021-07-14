@@ -1,4 +1,5 @@
 import 'package:cuidapet_api/entities/user.dart';
+import 'package:cuidapet_api/modules/users/view_models/user_confirm_input_model.dart';
 import 'package:cuidapet_api/modules/users/view_models/user_save_input_model.dart';
 
 abstract class IUserService {
@@ -9,4 +10,6 @@ abstract class IUserService {
 
   Future<User> loginWithSocial(
       String email, String avatar, String socialType, String socialKey);
+
+  Future<String> confirmLogin(UserConfirmInputModel inputModel);
 }

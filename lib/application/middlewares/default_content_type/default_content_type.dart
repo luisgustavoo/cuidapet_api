@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cuidapet_api/application/middlewares/middlewares.dart';
 import 'package:shelf/shelf.dart';
 

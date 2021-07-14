@@ -37,7 +37,7 @@ class UserRepository implements IUserRepository {
 
       final userId = result.insertId;
 
-      return user.copyWith(id: userId, password: null);
+      return user.copyWith(id: userId);
     } on MySqlException catch (e, s) {
       if (e.message.contains('usuario.email_UNIQUE')) {
         log.error('Usuario já cdastrado na base de dados', e, s);
@@ -124,6 +124,35 @@ class UserRepository implements IUserRepository {
             imageAvatar: (dataMysql['img_avatar'] as Blob?)?.toString(),
             supplierId: int.tryParse(dataMysql['fornecedor_id'].toString()));
       }
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<void> updateUserDeviceTokenAndRefreshToken(User user) async {
+    MySqlConnection? conn;
+    try {
+      conn = await connection.openConnection();
+
+      final setParams = <String, dynamic>{};
+
+      if (user.iosToken != null && user.iosToken.toString().isNotEmpty) {
+        setParams.putIfAbsent('ios_token', () => user.iosToken);
+      } else {
+        setParams.putIfAbsent('android_token', () => user.androidToken);
+      }
+
+      final query = '''
+          update usuario 
+            set ${setParams.keys.elementAt(0)} = ?, refresh_token = ? 
+          where id = ?                   
+         ''';
+      await conn.query(
+          query, [setParams.values.elementAt(0), user.refreshToken, user.id]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao confirmar login', e, s);
+      throw DatabaseException();
     } finally {
       await conn?.close();
     }

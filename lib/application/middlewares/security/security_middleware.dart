@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
 import 'package:cuidapet_api/application/logs/i_logger.dart';
@@ -47,10 +46,10 @@ class SecurityMiddleware extends Middlewares {
 
       final claimsMap = claims.toJson();
 
-      final userId = int.tryParse(claimsMap['sub'].toString());
-      final supplierId = int.tryParse(claimsMap['supplier'].toString());
+      final userId = claimsMap['sub'].toString();
+      final supplierId = claimsMap['supplier'].toString();
 
-      if (userId == null) {
+      if (userId.isEmpty) {
         throw JwtException.invalidToken;
       }
 

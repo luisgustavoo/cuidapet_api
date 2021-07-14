@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cuidapet_api/application/middlewares/middlewares.dart';
@@ -13,12 +14,17 @@ class CorsMiddleware extends Middlewares {
 
   @override
   Future<Response> execute(Request request) async {
-    if (request.method == 'OPTIONS') {
-      return Response(HttpStatus.ok, headers: headers);
+    try{
+      if (request.method == 'OPTIONS') {
+        return Response(HttpStatus.ok, headers: headers);
+      }
+
+      final response = await innerHandler(request);
+
+      return response.change(headers: headers);
+    }on Exception catch(e){
+      print(e);
+      return Response.forbidden(jsonEncode({'Teste': 'Teste'}));
     }
-
-    final response = await innerHandler(request);
-
-    return response.change(headers: headers);
   }
 }
