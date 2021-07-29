@@ -11,6 +11,7 @@ class JwtHelper {
         issuer: 'cuidapet',
         subject: userId.toString(),
         expiry: DateTime.now().add(const Duration(days: 1)),
+        //expiry: DateTime.now().add(const Duration(seconds: 20)),
         notBefore: DateTime.now(),
         issuedAt: DateTime.now(),
         otherClaims: <String, dynamic>{'supplier': supplierId},

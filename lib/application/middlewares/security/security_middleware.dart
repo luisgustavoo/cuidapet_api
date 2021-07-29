@@ -40,7 +40,7 @@ class SecurityMiddleware extends Middlewares {
 
       final claims = JwtHelper.getClaims(authorizationToken);
 
-      if (request.method != '/auth/refresh') {
+      if (request.url.path != 'auth/refresh') {
         claims.validate();
       }
 
