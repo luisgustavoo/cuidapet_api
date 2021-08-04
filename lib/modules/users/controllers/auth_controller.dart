@@ -99,8 +99,7 @@ class AuthController {
         'access_token': userRefreshToken.accessToken,
         'refresh_token': userRefreshToken.refreshToken
       }));
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       return Response.internalServerError(
           body: jsonEncode({'message': 'Erro ao atualizar access token'}));
     }

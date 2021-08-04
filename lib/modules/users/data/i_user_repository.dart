@@ -13,4 +13,6 @@ abstract class IUserRepository {
 
   Future<void> updateRefreshToken(User user);
 
+  Future<User> findById(int id);
+
 }

@@ -170,4 +170,34 @@ class UserRepository implements IUserRepository {
       await conn?.close();
     }
   }
+
+  @override
+  Future<User> findById(int id) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query(
+          'select id, email, tipo_cadastro, ios_token, refresh_token, img_avatar, fornecedor_id from usuario where id = ?',
+          [id]);
+
+      if (result.isEmpty) {
+        throw UserNotFoundException(message: 'Usuário não encontrado');
+      } else {
+        final dataMysql = result.first;
+
+        return User(
+            id: dataMysql['id'] as int,
+            email: dataMysql['email'] as String,
+            registerType: dataMysql['tipo_cadastro'] as String,
+            iosToken: (dataMysql['ios_token'] as Blob?)?.toString(),
+            androidToken: (dataMysql['android_token'] as Blob?)?.toString(),
+            refreshToken: (dataMysql['refresh_token'] as Blob?)?.toString(),
+            imageAvatar: (dataMysql['img_avatar'] as Blob?)?.toString(),
+            supplierId: int.tryParse(dataMysql['fornecedor_id'].toString()));
+      }
+    } finally {
+      await conn?.close();
+    }
+  }
 }

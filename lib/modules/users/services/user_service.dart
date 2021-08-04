@@ -32,12 +32,12 @@ class UserService implements IUserService {
 
   @override
   Future<User> loginWithEmailPassword(String email, String password,
-      {bool supplierUser = false}) =>
+          {bool supplierUser = false}) =>
       userRepository.loginWithEmailPassword(email, password);
 
   @override
-  Future<User> loginWithSocial(String email, String avatar, String socialType,
-      String socialKey) async {
+  Future<User> loginWithSocial(
+      String email, String avatar, String socialType, String socialKey) async {
     try {
       return await userRepository.loginByEmailSocialKey(
           email, socialKey, socialType);
@@ -71,8 +71,8 @@ class UserService implements IUserService {
       UserRefreshTokenInputModel model) async {
     _validateRefreshToken(model);
     final newAccessToken = JwtHelper.generateJWT(model.user, model.supplier);
-    final newRefreshToken = JwtHelper.refreshToken(
-        newAccessToken.replaceAll('Bearer', ''));
+    final newRefreshToken =
+        JwtHelper.refreshToken(newAccessToken.replaceAll('Bearer', ''));
     final user = User(id: model.user, refreshToken: model.refreshToken);
     await userRepository.updateRefreshToken(user);
     return RefreshTokenViewModel(
@@ -87,15 +87,18 @@ class UserService implements IUserService {
         throw const ServiceException('Refresh Token invalido');
       }
 
-      JwtHelper.getClaims(refreshToken.last).validate(
-          issuer: model.accessToken);
-    } on ServiceException catch (e) {
+      JwtHelper.getClaims(refreshToken.last)
+          .validate(issuer: model.accessToken);
+    } on ServiceException {
       rethrow;
-    } on JwtException catch (e) {
+    } on JwtException {
       log.error('Refresh token invalido');
       throw const ServiceException('Erro ao validar refresh token');
-    } on Exception catch (e) {
+    } on Exception {
       throw const ServiceException('Erro ao validar refresh token');
     }
   }
+
+  @override
+  Future<User> findById(int id) => userRepository.findById(id);
 }
