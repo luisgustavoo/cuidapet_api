@@ -15,4 +15,6 @@ abstract class IUserRepository {
 
   Future<User> findById(int id);
 
+  Future<void> updateUrlAvatar(int userId, String urlAvatar);
+
 }

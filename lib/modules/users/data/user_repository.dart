@@ -124,6 +124,9 @@ class UserRepository implements IUserRepository {
             imageAvatar: (dataMysql['img_avatar'] as Blob?)?.toString(),
             supplierId: int.tryParse(dataMysql['fornecedor_id'].toString()));
       }
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao realizar login com rede social', e, s);
+      throw DatabaseException();
     } finally {
       await conn?.close();
     }
@@ -166,6 +169,9 @@ class UserRepository implements IUserRepository {
       conn = await connection.openConnection();
       await conn.query('update usuario set refresh_token = ? where id = ?',
           [user.refreshToken, user.id]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar refresh token', e, s);
+      throw DatabaseException();
     } finally {
       await conn?.close();
     }
@@ -196,6 +202,25 @@ class UserRepository implements IUserRepository {
             imageAvatar: (dataMysql['img_avatar'] as Blob?)?.toString(),
             supplierId: int.tryParse(dataMysql['fornecedor_id'].toString()));
       }
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao buscar usuario por id', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<void> updateUrlAvatar(int userId, String urlAvatar) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      await conn.query('update usuario set img_avatar = ? where id = ?',
+          [urlAvatar, userId]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar avatar', e, s);
+      throw DatabaseException();
     } finally {
       await conn?.close();
     }
