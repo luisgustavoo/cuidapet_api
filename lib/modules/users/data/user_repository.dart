@@ -6,6 +6,7 @@ import 'package:cuidapet_api/application/helpers/cripty_helper.dart';
 import 'package:cuidapet_api/application/logs/i_logger.dart';
 import 'package:cuidapet_api/entities/user.dart';
 import 'package:cuidapet_api/modules/users/data/i_user_repository.dart';
+import 'package:cuidapet_api/modules/users/view_models/platform.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
 
@@ -220,6 +221,35 @@ class UserRepository implements IUserRepository {
           [urlAvatar, userId]);
     } on MySqlException catch (e, s) {
       log.error('Erro ao atualizar avatar', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<void> updateDeviceToken(
+      int userId, String token, Platform platform) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+
+      final setParams = <String, dynamic>{};
+
+      if (platform == Platform.ios) {
+        setParams.putIfAbsent('ios_token', () => token);
+      } else {
+        setParams.putIfAbsent('android_token', () => token);
+      }
+
+      await conn.query('''
+          update usuario 
+            set ${setParams.keys.elementAt(0)} = ? 
+          where id = ?                   
+         ''', [setParams.values.elementAt(0), userId]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar device token', e, s);
       throw DatabaseException();
     } finally {
       await conn?.close();
