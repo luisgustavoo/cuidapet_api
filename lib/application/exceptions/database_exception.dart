@@ -5,7 +5,6 @@ class DatabaseException implements Exception {
   final Exception? exception;
 
   @override
-  String toString() {
-    return 'DatabaseException{message: $message, exception: $exception}';
-  }
+  String toString() =>
+      'DatabaseException{message: $message, exception: $exception}';
 }

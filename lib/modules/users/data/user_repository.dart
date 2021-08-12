@@ -1,14 +1,15 @@
-import 'package:cuidapet_api/application/database/i_database_connection.dart';
-import 'package:cuidapet_api/application/exceptions/database_exception.dart';
-import 'package:cuidapet_api/application/exceptions/user_exists_exception.dart';
-import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
-import 'package:cuidapet_api/application/helpers/cripty_helper.dart';
-import 'package:cuidapet_api/application/logs/i_logger.dart';
-import 'package:cuidapet_api/entities/user.dart';
-import 'package:cuidapet_api/modules/users/data/i_user_repository.dart';
-import 'package:cuidapet_api/modules/users/view_models/platform.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
+
+import '../../../application/database/i_database_connection.dart';
+import '../../../application/exceptions/database_exception.dart';
+import '../../../application/exceptions/user_exists_exception.dart';
+import '../../../application/exceptions/user_notfound_exception.dart';
+import '../../../application/helpers/cripty_helper.dart';
+import '../../../application/logs/i_logger.dart';
+import '../../../entities/user.dart';
+import '../view_models/platform.dart';
+import 'i_user_repository.dart';
 
 @LazySingleton(as: IUserRepository)
 class UserRepository implements IUserRepository {
@@ -24,8 +25,9 @@ class UserRepository implements IUserRepository {
     try {
       conn = await connection.openConnection();
 
-      const query =
-          'insert into usuario (email, senha, tipo_cadastro, img_avatar, social_id, fornecedor_id) values (?,?,?,?,?,?)';
+      const query = '''
+                    insert into usuario (email, senha, tipo_cadastro, img_avatar, social_id, fornecedor_id) values (?,?,?,?,?,?)
+                    ''';
 
       final result = await conn.query(query, [
         user.email,
@@ -110,9 +112,9 @@ class UserRepository implements IUserRepository {
 
         if (dataMysql['social_id'] == null ||
             dataMysql['social_id'] != socialKey) {
-          await conn.query(
-              'update usuario set social_id = ?, tipo_cadastro = ? where id = ?',
-              [socialKey, socialType, dataMysql['id']]);
+          await conn.query('''
+                            update usuario set social_id = ?, tipo_cadastro = ? where id = ?
+                           ''', [socialKey, socialType, dataMysql['id']]);
         }
 
         return User(
@@ -184,9 +186,11 @@ class UserRepository implements IUserRepository {
 
     try {
       conn = await connection.openConnection();
-      final result = await conn.query(
-          'select id, email, tipo_cadastro, ios_token, refresh_token, img_avatar, fornecedor_id from usuario where id = ?',
-          [id]);
+      final result = await conn.query('''
+                                        select id, email, tipo_cadastro, ios_token, refresh_token, img_avatar, fornecedor_id 
+                                         from usuario 
+                                        where id = ?
+                                      ''', [id]);
 
       if (result.isEmpty) {
         throw UserNotFoundException(message: 'Usuário não encontrado');

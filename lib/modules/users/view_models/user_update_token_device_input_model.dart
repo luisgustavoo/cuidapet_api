@@ -1,5 +1,5 @@
-import 'package:cuidapet_api/application/helpers/request_mapping.dart';
-import 'package:cuidapet_api/modules/users/view_models/platform.dart';
+import '../../../application/helpers/request_mapping.dart';
+import 'platform.dart';
 
 class UserUpdateDeviceInputModel extends RequestMapping {
   UserUpdateDeviceInputModel(

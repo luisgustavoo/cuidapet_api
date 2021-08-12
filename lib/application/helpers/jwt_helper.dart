@@ -20,9 +20,8 @@ class JwtHelper {
     return 'Bearer ${issueJwtHS256(claimSet, _jwtSecret)}';
   }
 
-  static JwtClaim getClaims(String token) {
-    return verifyJwtHS256Signature(token, _jwtSecret);
-  }
+  static JwtClaim getClaims(String token) =>
+      verifyJwtHS256Signature(token, _jwtSecret);
 
   static String refreshToken(String accessToken) {
     final claimSet = JwtClaim(

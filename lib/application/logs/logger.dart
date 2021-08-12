@@ -1,5 +1,6 @@
-import 'package:cuidapet_api/application/logs/i_logger.dart';
 import 'package:logger/logger.dart' as log;
+
+import 'i_logger.dart';
 
 class Logger implements ILogger {
   final _logger = log.Logger();

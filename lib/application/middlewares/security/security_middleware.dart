@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
-import 'package:cuidapet_api/application/logs/i_logger.dart';
-import 'package:cuidapet_api/application/middlewares/middlewares.dart';
-import 'package:cuidapet_api/application/middlewares/security/security_skip_url.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:shelf/shelf.dart';
+
+import '../../helpers/jwt_helper.dart';
+import '../../logs/i_logger.dart';
+import '../middlewares.dart';
+import 'security_skip_url.dart';
 
 class SecurityMiddleware extends Middlewares {
   SecurityMiddleware(this.log);

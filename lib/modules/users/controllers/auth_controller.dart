@@ -1,18 +1,19 @@
 import 'dart:convert';
 
-import 'package:cuidapet_api/application/exceptions/user_exists_exception.dart';
-import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
-import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
-import 'package:cuidapet_api/application/logs/i_logger.dart';
-import 'package:cuidapet_api/entities/user.dart';
-import 'package:cuidapet_api/modules/users/services/i_user_service.dart';
-import 'package:cuidapet_api/modules/users/view_models/login_view_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_confirm_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_refresh_token_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_save_input_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
+
+import '../../../application/exceptions/user_exists_exception.dart';
+import '../../../application/exceptions/user_notfound_exception.dart';
+import '../../../application/helpers/jwt_helper.dart';
+import '../../../application/logs/i_logger.dart';
+import '../../../entities/user.dart';
+import '../services/i_user_service.dart';
+import '../view_models/login_view_model.dart';
+import '../view_models/user_confirm_input_model.dart';
+import '../view_models/user_refresh_token_input_model.dart';
+import '../view_models/user_save_input_model.dart';
 
 part 'auth_controller.g.dart';
 

@@ -1,7 +1,8 @@
-import 'package:cuidapet_api/application/router/i_router.dart';
-import 'package:cuidapet_api/modules/categories/cateogories_router.dart';
-import 'package:cuidapet_api/modules/users/user_router.dart';
 import 'package:shelf_router/shelf_router.dart';
+
+import '../../modules/categories/categories_router.dart';
+import '../../modules/users/user_router.dart';
+import 'i_router.dart';
 
 class RouterConfigure {
   RouterConfigure(this._router);
@@ -9,5 +10,11 @@ class RouterConfigure {
   final Router _router;
   final List<IRouter> _routers = [UserRouter(), CategoriesRouter()];
 
-  void configure() => _routers.forEach((r) => r.configure(_router));
+  void configure() {
+    for (final r in _routers) {
+      r.configure(_router);
+    }
+  }
+
+//void configure() => _routers.forEach((r) => r.configure(_router));
 }

@@ -1,18 +1,19 @@
-import 'package:cuidapet_api/application/exceptions/service_exception.dart';
-import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
-import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
-import 'package:cuidapet_api/application/logs/i_logger.dart';
-import 'package:cuidapet_api/entities/user.dart';
-import 'package:cuidapet_api/modules/users/data/i_user_repository.dart';
-import 'package:cuidapet_api/modules/users/services/i_user_service.dart';
-import 'package:cuidapet_api/modules/users/view_models/refresh_token_view_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/update_url_avatar_view_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_confirm_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_refresh_token_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_save_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_update_token_device_input_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
+
+import '../../../application/exceptions/service_exception.dart';
+import '../../../application/exceptions/user_notfound_exception.dart';
+import '../../../application/helpers/jwt_helper.dart';
+import '../../../application/logs/i_logger.dart';
+import '../../../entities/user.dart';
+import '../data/i_user_repository.dart';
+import '../view_models/refresh_token_view_model.dart';
+import '../view_models/update_url_avatar_view_model.dart';
+import '../view_models/user_confirm_input_model.dart';
+import '../view_models/user_refresh_token_input_model.dart';
+import '../view_models/user_save_input_model.dart';
+import '../view_models/user_update_token_device_input_model.dart';
+import 'i_user_service.dart';
 
 @LazySingleton(as: IUserService)
 class UserService implements IUserService {

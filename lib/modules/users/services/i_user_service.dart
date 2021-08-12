@@ -1,10 +1,10 @@
-import 'package:cuidapet_api/entities/user.dart';
-import 'package:cuidapet_api/modules/users/view_models/refresh_token_view_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/update_url_avatar_view_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_confirm_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_refresh_token_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_save_input_model.dart';
-import 'package:cuidapet_api/modules/users/view_models/user_update_token_device_input_model.dart';
+import '../../../entities/user.dart';
+import '../view_models/refresh_token_view_model.dart';
+import '../view_models/update_url_avatar_view_model.dart';
+import '../view_models/user_confirm_input_model.dart';
+import '../view_models/user_refresh_token_input_model.dart';
+import '../view_models/user_save_input_model.dart';
+import '../view_models/user_update_token_device_input_model.dart';
 
 abstract class IUserService {
   Future<User> createUser(UserSaveInputModel user);
