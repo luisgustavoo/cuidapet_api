@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cuidapet_api/application/logs/i_logger.dart';
+import 'package:cuidapet_api/entities/supplier.dart';
 import 'package:cuidapet_api/modules/supplier/service/i_supplier_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shelf/shelf.dart';
@@ -46,5 +47,42 @@ class SupplierController {
     }
   }
 
+  @Route.get('/<id|[0-9]+>')
+  Future<Response> findById(Request request, String id) async {
+    try {
+      final supplier = await service.findById(int.parse(id));
+
+      if (supplier == null) {
+        return Response.ok(jsonEncode(<String, dynamic>{}));
+      }
+
+      return Response.ok(_supplierMapper(supplier));
+    } on Exception catch (e, s) {
+      log.error('Erro ao buscar fornecedores perto de mim', e, s);
+      return Response.internalServerError(
+          body: jsonEncode(
+              {'message': 'Erro ao buscar fornecedores perto de mim'}));
+    }
+  }
+
+  String _supplierMapper(Supplier supplier) {
+    return jsonEncode({
+      'id': supplier.id,
+      'name': supplier.name,
+      'logo': supplier.logo,
+      'address': supplier.address,
+      'phone': supplier.phone,
+      'latitude': supplier.lat,
+      'longitude': supplier.lng,
+      'category': {
+        'id': supplier.category?.id,
+        'name': supplier.category?.name,
+        'type': supplier.category?.type
+      },
+    });
+  }
+
   Router get router => _$SupplierControllerRouter(this);
+
+
 }

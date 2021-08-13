@@ -2,6 +2,8 @@ import 'package:cuidapet_api/application/database/i_database_connection.dart';
 import 'package:cuidapet_api/application/exceptions/database_exception.dart';
 import 'package:cuidapet_api/application/logs/i_logger.dart';
 import 'package:cuidapet_api/dtos/supplier_nearby_me_dto.dart';
+import 'package:cuidapet_api/entities/category.dart';
+import 'package:cuidapet_api/entities/supplier.dart';
 import 'package:cuidapet_api/modules/supplier/data/i_supplier_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
@@ -44,6 +46,55 @@ class SupplierRepository implements ISupplierRepository {
           .toList();
     } on MySqlException catch (e, s) {
       log.error('Erro ao buscar fornecedores perto de mim', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<Supplier?> findById(int id) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query('''
+            SELECT 
+                f.id,
+                f.nome,
+                f.logo,
+                f.endereco,
+                f.telefone,
+                ST_X(f.latlng) AS lat,
+                ST_Y(f.latlng) AS lng,
+                f.categorias_fornecedor_id,
+                c.nome_categoria,
+                c.tipo_categoria
+            FROM
+                fornecedor f
+                    INNER JOIN
+                categorias_fornecedor c ON (f.categorias_fornecedor_id = c.id)
+            where f.id = ? 
+         ''', [id]);
+
+      if (result.isNotEmpty) {
+        final dataMysql = result.first;
+        return Supplier(
+            id: dataMysql['id'] as int,
+            name: dataMysql['nome'].toString(),
+            address: dataMysql['endereco'].toString(),
+            lat: dataMysql['lat'] as double,
+            lng: dataMysql['lng'] as double,
+            logo: (dataMysql['logo'] as Blob?).toString(),
+            phone: dataMysql['telefone'].toString(),
+            category: Category(
+              id: dataMysql['categorias_fornecedor_id'] as int,
+              name: dataMysql['nome_categoria'].toString(),
+              type: dataMysql['tipo_categoria'].toString(),
+            ));
+      }
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao fornecedor por id', e, s);
       throw DatabaseException();
     } finally {
       await conn?.close();
