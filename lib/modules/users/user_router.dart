@@ -1,9 +1,9 @@
+import 'package:cuidapet_api/application/router/i_router.dart';
+import 'package:cuidapet_api/modules/users/controllers/auth_controller.dart';
+import 'package:cuidapet_api/modules/users/controllers/user_controller.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shelf_router/shelf_router.dart';
 
-import '../../application/router/i_router.dart';
-import 'controllers/auth_controller.dart';
-import 'controllers/user_controller.dart';
 
 
 class UserRouter implements IRouter {

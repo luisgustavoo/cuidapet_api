@@ -1,5 +1,6 @@
-import '../../../entities/user.dart';
-import '../view_models/platform.dart';
+
+import 'package:cuidapet_api/entities/user.dart';
+import 'package:cuidapet_api/modules/users/view_models/platform.dart';
 
 abstract class IUserRepository {
   Future<User> createUser(User user);

@@ -1,4 +1,5 @@
-import '../../../application/helpers/request_mapping.dart';
+
+import 'package:cuidapet_api/application/helpers/request_mapping.dart';
 
 class LoginViewModel extends RequestMapping {
   LoginViewModel(String dataRequest) : super(dataRequest);

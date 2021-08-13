@@ -46,5 +46,4 @@ Future<void> main(List<String> args) async {
 
   final server = await io.serve(handler, _hostname, port);
   print('Serving at http://${server.address.host}:${server.port}');
-
 }

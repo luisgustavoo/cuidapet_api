@@ -1,8 +1,7 @@
 import 'dart:io';
 
+import 'package:cuidapet_api/application/middlewares/middlewares.dart';
 import 'package:shelf/shelf.dart';
-
-import '../middlewares.dart';
 
 class CorsMiddleware extends Middlewares {
   final Map<String, String> headers = {

@@ -1,6 +1,6 @@
+import 'package:cuidapet_api/application/middlewares/middlewares.dart';
 import 'package:shelf/shelf.dart';
 
-import '../middlewares.dart';
 
 class DefaultContentType extends Middlewares {
   DefaultContentType(this.contentType);
