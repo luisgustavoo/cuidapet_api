@@ -1,12 +1,8 @@
 class SupplierService {
-
-  SupplierService(
-      {required this.id, required this.supplierId, required this.name, required this.price});
-
+  SupplierService({required this.id, this.supplierId, this.name, this.price});
 
   final int id;
-  final int supplierId;
-  final String name;
-  final double price;
-
+  final int? supplierId;
+  final String? name;
+  final double? price;
 }
