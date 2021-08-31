@@ -14,7 +14,8 @@ class SecurityMiddleware extends Middlewares {
   final skipUrl = <SecuritySkipUrl>[
     const SecuritySkipUrl(url: '/auth/register', method: 'POST'),
     const SecuritySkipUrl(url: '/auth/', method: 'POST'),
-    const SecuritySkipUrl(url: '/suppliers/user', method: 'GET')
+    const SecuritySkipUrl(url: '/suppliers/user', method: 'GET'),
+    const SecuritySkipUrl(url: '/suppliers/user', method: 'POST'),
   ];
   final ILogger log;
 
