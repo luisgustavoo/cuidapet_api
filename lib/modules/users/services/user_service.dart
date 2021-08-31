@@ -14,7 +14,6 @@ import 'package:cuidapet_api/modules/users/view_models/user_update_token_device_
 import 'package:injectable/injectable.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 
-
 @LazySingleton(as: IUserService)
 class UserService implements IUserService {
   UserService({required this.userRepository, required this.log});
@@ -36,7 +35,8 @@ class UserService implements IUserService {
   @override
   Future<User> loginWithEmailPassword(String email, String password,
           {bool supplierUser = false}) =>
-      userRepository.loginWithEmailPassword(email, password);
+      userRepository.loginWithEmailPassword(email, password,
+          supplierUser: supplierUser);
 
   @override
   Future<User> loginWithSocial(

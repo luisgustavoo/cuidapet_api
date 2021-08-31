@@ -36,7 +36,8 @@ class SupplierRepository implements ISupplierRepository {
                                 sin(radians(ST_X(f.latlng)))
                     )) AS distancia
                 FROM fornecedor f
-                HAVING distancia <= $distance;
+                HAVING distancia <= $distance
+               ORDER BY distancia
           ''');
 
       return result
@@ -185,6 +186,60 @@ class SupplierRepository implements ISupplierRepository {
       return result.insertId ?? -1;
     } on MySqlException catch (e, s) {
       log.error('Erro ao cadastrar novo fornecedor', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<Supplier> update(Supplier supplier) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      await conn.query('''
+      UPDATE fornecedor 
+         SET 
+          nome = ?, 
+          logo = ?, 
+          endereco = ?, 
+          telefone = ?, 
+          latlng = ST_GeomFromText(?), 
+          categorias_fornecedor_id = ? 
+      WHERE id = ?''', <Object?>[
+        supplier.name,
+        supplier.logo,
+        supplier.address,
+        supplier.phone,
+        'POINT(${supplier.lat} ${supplier.lng})',
+        supplier.category?.id,
+        supplier.id
+      ]);
+
+      Category? category;
+      final categoryId = supplier.category?.id;
+      if (categoryId != null) {
+        final resultCategory = await conn.query('''
+        SELECT 
+            *
+        FROM
+            categorias_fornecedor
+        WHERE
+            id = ?
+        ''', [categoryId]);
+
+        final categoryData = resultCategory.first;
+
+        category = Category(
+            id: int.parse(categoryData['id'].toString()),
+            name: categoryData['nome_categoria'].toString(),
+            type: categoryData['tipo_categoria'].toString());
+      }
+
+      return supplier.copyWith(category: category);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar dados do fornecedor', e, s);
       throw DatabaseException();
     } finally {
       await conn?.close();
