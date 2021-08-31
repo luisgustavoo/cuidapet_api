@@ -30,6 +30,17 @@ class ScheduleController {
       return Response.internalServerError();
     }
   }
+  
+  @Route.put('/<scheduleId|[0-9]+>/status/<status>')
+  Future<Response> changeStatus(Request request, String scheduleId, String status) async{
+    try {
+      await service.changeStatus(status, int.parse(scheduleId));
+      return Response.ok(jsonEncode(<String, dynamic>{}));
+    } on Exception catch (e, s) {
+      log.error('Erro ao alterar status do agendamento', e, s);
+      return Response.internalServerError();
+    }
+  }
 
   Router get router => _$ScheduleControllerRouter(this);
 }
