@@ -9,4 +9,6 @@ abstract class ISupplierRepository {
   Future<Supplier?> findById(int id);
 
   Future<List<SupplierService>> findServicesBySupplierId(int id);
+
+  Future<bool> checkUserEmailExists(String email);
 }

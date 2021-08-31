@@ -13,7 +13,8 @@ class SecurityMiddleware extends Middlewares {
 
   final skipUrl = <SecuritySkipUrl>[
     const SecuritySkipUrl(url: '/auth/register', method: 'POST'),
-    const SecuritySkipUrl(url: '/auth/', method: 'POST')
+    const SecuritySkipUrl(url: '/auth/', method: 'POST'),
+    const SecuritySkipUrl(url: '/suppliers/user', method: 'GET')
   ];
   final ILogger log;
 
@@ -21,7 +22,7 @@ class SecurityMiddleware extends Middlewares {
   Future<Response> execute(Request request) async {
     try {
       if (skipUrl.contains(
-          SecuritySkipUrl(url: '/${request.url}', method: request.method))) {
+          SecuritySkipUrl(url: '/${request.url.path}', method: request.method))) {
         return innerHandler(request);
       }
 

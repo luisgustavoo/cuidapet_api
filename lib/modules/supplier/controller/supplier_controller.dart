@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:cuidapet_api/application/logs/i_logger.dart';
 import 'package:cuidapet_api/entities/supplier.dart';
@@ -87,6 +88,19 @@ class SupplierController {
       return Response.internalServerError(
           body: jsonEncode({'message': 'Erro ao buscar servicos'}));
     }
+  }
+
+  @Route.get('/user')
+  Future<Response> checkUserExits(Request request) async {
+    final email = request.url.queryParameters['email'];
+
+    if (email == null) {
+      return Response(400, body: jsonEncode({'message': 'E-mail obrigatório'}));
+    }
+
+    final isEmailExists = await service.checkUserEmailExists(email);
+
+    return isEmailExists ? Response(200) : Response(204);
   }
 
   String _supplierMapper(Supplier supplier) {

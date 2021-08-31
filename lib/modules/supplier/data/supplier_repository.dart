@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cuidapet_api/application/database/i_database_connection.dart';
 import 'package:cuidapet_api/application/exceptions/database_exception.dart';
 import 'package:cuidapet_api/application/logs/i_logger.dart';
@@ -130,6 +132,32 @@ class SupplierRepository implements ISupplierRepository {
       return <SupplierService>[];
     } on MySqlException catch (e, s) {
       log.error('Erro ao buscar servicos de um fornecedor', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<bool> checkUserEmailExists(String email) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query('''
+          SELECT 
+              COUNT(*)
+          FROM
+              usuario
+          WHERE
+              email = ?
+    ''', [email]);
+
+      final dataMysql = result.first;
+
+      return int.parse(dataMysql[0].toString()) > 0;
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao verificar se email existe', e, s);
       throw DatabaseException();
     } finally {
       await conn?.close();
