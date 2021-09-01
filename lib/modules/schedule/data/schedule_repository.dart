@@ -176,4 +176,56 @@ class ScheduleRepository implements IScheduleRepository {
       await conn?.close();
     }
   }
+
+  @override
+  Future<List<Schedule>> findAllScheduleByUserSupplier(int userId) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query('''
+           SELECT 
+              a.id,
+              a.data_agendamento,
+              a.status,
+              a.nome,
+              a.nome_pet,
+              f.id AS fornec_id,
+              f.nome AS fornec_nome,
+              f.logo
+          FROM
+              agendamento a
+                  INNER JOIN
+              fornecedor f ON f.id = a.fornecedor_id
+                  INNER JOIN
+              usuario u ON u.fornecedor_id = f.id          
+          WHERE
+              u.id = ?    
+          ORDER BY data_agendamento DESC    
+      ''', [userId]);
+
+      final scheduleResult = result
+          .map((s) async => Schedule(
+              id: int.parse(s['id'].toString()),
+              scheduleDate: DateTime.parse(s['data_agendamento'].toString()),
+              status: s['status'].toString(),
+              name: s['nome'].toString(),
+              petName: s['nome_pet'].toString(),
+              userId: userId,
+              supplier: Supplier(
+                  id: int.parse(s['fornec_id'].toString()),
+                  name: s['fornec_nome'].toString(),
+                  logo: s['logo'].toString()),
+              service: await findAllServicesBySchedule(
+                  int.parse(s['id'].toString()))))
+          .toList();
+
+      return Future.wait(scheduleResult);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao buscar agendamentos de um usuário', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
 }

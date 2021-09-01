@@ -37,4 +37,8 @@ class ScheduleService implements IScheduleService {
   @override
   Future<List<Schedule>> findAllScheduleByUser(int userId) =>
       repository.findAllScheduleByUser(userId);
+
+  @override
+  Future<List<Schedule>> findAllScheduleByUserSupplier(int userId) =>
+      repository.findAllScheduleByUserSupplier(userId);
 }
