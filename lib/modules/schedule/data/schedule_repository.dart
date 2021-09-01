@@ -2,6 +2,9 @@ import 'package:cuidapet_api/application/database/i_database_connection.dart';
 import 'package:cuidapet_api/application/exceptions/database_exception.dart';
 import 'package:cuidapet_api/application/logs/i_logger.dart';
 import 'package:cuidapet_api/entities/schedule.dart';
+import 'package:cuidapet_api/entities/schedule_supplier_service.dart';
+import 'package:cuidapet_api/entities/supplier.dart';
+import 'package:cuidapet_api/entities/supplier_service.dart';
 import 'package:cuidapet_api/modules/schedule/data/i_schedule_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mysql1/mysql1.dart';
@@ -72,7 +75,7 @@ class ScheduleRepository implements IScheduleRepository {
   @override
   Future<void> changeStatus(String status, int scheduleId) async {
     MySqlConnection? conn;
-    
+
     try {
       conn = await connection.openConnection();
       await conn.query('''
@@ -81,9 +84,93 @@ class ScheduleRepository implements IScheduleRepository {
           status = ?
         WHERE id = ?
        ''', [status, scheduleId]);
-      
     } on MySqlException catch (e, s) {
       log.error('Erro ao alterar status de um agendamento', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<List<Schedule>> findAllScheduleByUser(int userId) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query('''
+           SELECT 
+              a.id,
+              a.data_agendamento,
+              a.status,
+              a.nome,
+              a.nome_pet,
+              f.id AS fornec_id,
+              f.nome AS fornec_nome,
+              f.logo
+          FROM
+              agendamento a
+                  INNER JOIN
+              fornecedor f ON f.id = a.fornecedor_id
+          WHERE
+              a.usuario_id = ?    
+          ORDER BY data_agendamento DESC    
+      ''', [userId]);
+
+      final scheduleResult = result
+          .map((s) async => Schedule(
+              id: int.parse(s['id'].toString()),
+              scheduleDate: DateTime.parse(s['data_agendamento'].toString()),
+              status: s['status'].toString(),
+              name: s['nome'].toString(),
+              petName: s['nome_pet'].toString(),
+              userId: userId,
+              supplier: Supplier(
+                  id: int.parse(s['fornec_id'].toString()),
+                  name: s['fornec_nome'].toString(),
+                  logo: s['logo'].toString()),
+              service: await findAllServicesBySchedule(
+                  int.parse(s['id'].toString()))))
+          .toList();
+
+      return Future.wait(scheduleResult);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao buscar agendamentos de um usuário', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  Future<List<ScheduleSupplierService>> findAllServicesBySchedule(
+      int scheduleId) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query('''
+          SELECT 
+              fs.id,
+              fs.nome_servico,
+              fs.valor_servico,
+              fs.fornecedor_id
+          FROM
+              agendamento_servicos ags
+                  INNER JOIN
+              fornecedor_servicos fs ON ags.fornecedor_servicos_id = fs.id
+          where ags.agendamento_id = ?      
+      ''', [scheduleId]);
+
+      return result
+          .map((s) => ScheduleSupplierService(
+              service: SupplierService(
+                  id: int.parse(s['id'].toString()),
+                  name: s['nome_servico'].toString(),
+                  price: double.parse(s['valor_servico'].toString()),
+                  supplierId: int.parse(s['fornecedor_id'].toString()))))
+          .toList();
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao buscar servicos de uma agendamento', e, s);
       throw DatabaseException();
     } finally {
       await conn?.close();

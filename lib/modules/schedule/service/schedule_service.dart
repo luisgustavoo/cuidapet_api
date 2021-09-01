@@ -31,5 +31,10 @@ class ScheduleService implements IScheduleService {
   }
 
   @override
-  Future<void> changeStatus(String status, int scheduleId) => repository.changeStatus(status, scheduleId);
+  Future<void> changeStatus(String status, int scheduleId) =>
+      repository.changeStatus(status, scheduleId);
+
+  @override
+  Future<List<Schedule>> findAllScheduleByUser(int userId) =>
+      repository.findAllScheduleByUser(userId);
 }
