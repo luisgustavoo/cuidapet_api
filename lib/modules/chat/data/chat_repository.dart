@@ -146,4 +146,55 @@ class ChatRepository implements IChatRepository {
       await conn?.close();
     }
   }
+
+  @override
+  Future<List<Chat>> getChatsBySupplier(int supplier) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      final result = await conn.query('''
+          SELECT 
+              c.id,
+              c.data_criacao,
+              c.status,
+              a.nome,
+              a.nome_pet,
+              a.fornecedor_id,
+              a.usuario_id,
+              f.nome AS fornec_nome,
+              f.logo
+          FROM
+              chats c
+                  INNER JOIN
+              agendamento a ON a.id = c.agendamento_id
+                  INNER JOIN
+              fornecedor f ON f.id = a.fornecedor_id
+          WHERE
+              a.fornecedor_id = ? AND a.status = 'A'
+          ORDER BY c.data_criacao          
+      ''', [supplier  ]);
+
+
+      return result
+          .map((c) => Chat(
+        id: int.parse(c['id'].toString()),
+        user: int.parse(c['usuario_id'].toString()),
+        name: c['nome'].toString(),
+        supplier: Supplier(
+            id: int.parse(c['fornecedor_id'].toString()),
+            name: c['fornec_nome'].toString(),
+            logo: c['logo'].toString()),
+        status: c['status'].toString(),
+        petName: c['nome_pet'].toString(),
+      ))
+          .toList();
+
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao buscar os chats do fornecedor', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
 }

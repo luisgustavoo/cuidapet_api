@@ -50,7 +50,8 @@ class SecurityMiddleware extends Middlewares {
       final claimsMap = claims.toJson();
 
       final userId = claimsMap['sub'].toString();
-      final supplierId = claimsMap['supplier'].toString();
+      final supplierId = int.tryParse(claimsMap['supplier'].toString());
+
 
       if (userId.isEmpty) {
         throw JwtException.invalidToken;
@@ -59,8 +60,9 @@ class SecurityMiddleware extends Middlewares {
       final securityHeaders = <String, dynamic>{
         'user': userId,
         'access_token': authorizationToken,
-        'supplier': supplierId
+        'supplier': supplierId?.toString()
       };
+
 
       return innerHandler(request.change(headers: securityHeaders));
     } on JwtException catch (e, s) {

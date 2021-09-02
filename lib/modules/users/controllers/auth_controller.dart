@@ -74,7 +74,7 @@ class AuthController {
   @Route('PATCH', '/confirm')
   Future<Response> confirmLogin(Request request) async {
     final user = int.parse(request.headers['user']!);
-    final supplier = int.tryParse(request.headers['supplier']!);
+    final supplier = int.tryParse(request.headers['supplier'].toString());
     final token =
         JwtHelper.generateJWT(user, supplier).replaceAll('Bearer ', '');
     final inputModel = UserConfirmInputModel(
