@@ -9,4 +9,6 @@ abstract class IChatRepository {
 
   Future<List<Chat>> getChatsBySupplier(int supplier);
 
+  Future<void> endChat(int chatId);
+
 }

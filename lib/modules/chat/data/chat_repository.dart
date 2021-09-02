@@ -173,25 +173,43 @@ class ChatRepository implements IChatRepository {
           WHERE
               a.fornecedor_id = ? AND a.status = 'A'
           ORDER BY c.data_criacao          
-      ''', [supplier  ]);
-
+      ''', [supplier]);
 
       return result
           .map((c) => Chat(
-        id: int.parse(c['id'].toString()),
-        user: int.parse(c['usuario_id'].toString()),
-        name: c['nome'].toString(),
-        supplier: Supplier(
-            id: int.parse(c['fornecedor_id'].toString()),
-            name: c['fornec_nome'].toString(),
-            logo: c['logo'].toString()),
-        status: c['status'].toString(),
-        petName: c['nome_pet'].toString(),
-      ))
+                id: int.parse(c['id'].toString()),
+                user: int.parse(c['usuario_id'].toString()),
+                name: c['nome'].toString(),
+                supplier: Supplier(
+                    id: int.parse(c['fornecedor_id'].toString()),
+                    name: c['fornec_nome'].toString(),
+                    logo: c['logo'].toString()),
+                status: c['status'].toString(),
+                petName: c['nome_pet'].toString(),
+              ))
           .toList();
-
     } on MySqlException catch (e, s) {
       log.error('Erro ao buscar os chats do fornecedor', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
+
+  @override
+  Future<void> endChat(int chatId) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      await conn.query('''
+        UPDATE chats
+        SET
+          status = 'F'
+        WHERE id = ?       
+      ''', [chatId]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao finalizar chat', e, s);
       throw DatabaseException();
     } finally {
       await conn?.close();
