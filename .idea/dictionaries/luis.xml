@@ -2,8 +2,14 @@
   <dictionary name="luis">
     <words>
       <w>criacao</w>
+      <w>encontrada</w>
+      <w>enviada</w>
+      <w>enviando</w>
+      <w>enviar</w>
       <w>fornec</w>
       <w>iniciar</w>
+      <w>mensagem</w>
+      <w>notificação</w>
       <w>servico</w>
     </words>
   </dictionary>
