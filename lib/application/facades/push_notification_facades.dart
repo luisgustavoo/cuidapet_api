@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:cuidapet_api/application/logs/i_logger.dart';
 import 'package:dotenv/dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
-
 
 @LazySingleton()
 class PushNotificationFacades {

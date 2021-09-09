@@ -73,15 +73,20 @@ class AuthController {
 
   @Route('PATCH', '/confirm')
   Future<Response> confirmLogin(Request request) async {
-    final user = int.parse(request.headers['user']!);
-    final supplier = int.tryParse(request.headers['supplier'].toString());
-    final token =
-        JwtHelper.generateJWT(user, supplier).replaceAll('Bearer ', '');
-    final inputModel = UserConfirmInputModel(
-        userId: user, accessToken: token, data: await request.readAsString());
-    final refreshToken = await userService.confirmLogin(inputModel);
-    return Response.ok(jsonEncode(
-        {'access_token': 'Bearer $token', 'refresh_token': refreshToken}));
+    try {
+      final user = int.parse(request.headers['user']!);
+      final supplier = int.tryParse(request.headers['supplier'].toString());
+      final token =
+          JwtHelper.generateJWT(user, supplier).replaceAll('Bearer ', '');
+      final inputModel = UserConfirmInputModel(
+          userId: user, accessToken: token, data: await request.readAsString());
+      final refreshToken = await userService.confirmLogin(inputModel);
+      return Response.ok(jsonEncode(
+          {'access_token': 'Bearer $token', 'refresh_token': refreshToken}));
+    } on Exception catch (e, s) {
+      log.error('Erro ao confirmar login', e, s);
+      return Response.internalServerError();
+    }
   }
 
   @Route.get('/refresh')

@@ -4,7 +4,7 @@ import 'package:jaguar_jwt/jaguar_jwt.dart';
 class JwtHelper {
   JwtHelper._();
 
-  static final String _jwtSecret = env['jwt_secret'] ?? env['jwt_dev_secret']!;
+  static final String _jwtSecret = env['JWT_SECRET'] ?? env['jwt_dev_secret']!;
 
   static String generateJWT(int userId, int? supplierId) {
     final claimSet = JwtClaim(

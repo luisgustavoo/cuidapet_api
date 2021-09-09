@@ -27,3 +27,5 @@ dev_dependencies:
   injectable_generator: ^1.4.1
   # linter: ^1.5.0
   shelf_router_generator: ^1.0.0
+  test: ^1.17.12
+  mocktail: ^0.1.4
