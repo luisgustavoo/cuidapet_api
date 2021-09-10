@@ -196,7 +196,7 @@ class UserRepository implements IUserRepository {
       } else {
         final dataMysql = result.first;
 
-        return User(
+/*        return User(
             id: dataMysql['id'] as int,
             email: dataMysql['email'] as String,
             registerType: dataMysql['tipo_cadastro'] as String,
@@ -204,7 +204,18 @@ class UserRepository implements IUserRepository {
             androidToken: (dataMysql['android_token'] as Blob?)?.toString(),
             refreshToken: (dataMysql['refresh_token'] as Blob?)?.toString(),
             imageAvatar: (dataMysql['img_avatar'] as Blob?)?.toString(),
+            supplierId: int.tryParse(dataMysql['fornecedor_id'].toString()));*/
+
+        return User(
+            id: dataMysql['id'] as int,
+            email: dataMysql['email'] as String,
+            registerType: dataMysql['tipo_cadastro'] as String,
+            iosToken: dataMysql['ios_token'] .toString(),
+            androidToken: dataMysql['android_token'].toString(),
+            refreshToken: dataMysql['refresh_token'].toString(),
+            imageAvatar: dataMysql['img_avatar'].toString(),
             supplierId: int.tryParse(dataMysql['fornecedor_id'].toString()));
+
       }
     } on MySqlException catch (e, s) {
       log.error('Erro ao buscar usuario por id', e, s);
