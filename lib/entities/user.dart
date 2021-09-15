@@ -60,4 +60,33 @@ class User {
       supplierId: supplierId ?? this.supplierId,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          email == other.email &&
+          password == other.password &&
+          registerType == other.registerType &&
+          iosToken == other.iosToken &&
+          androidToken == other.androidToken &&
+          refreshToken == other.refreshToken &&
+          socialKey == other.socialKey &&
+          imageAvatar == other.imageAvatar &&
+          supplierId == other.supplierId;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      email.hashCode ^
+      password.hashCode ^
+      registerType.hashCode ^
+      iosToken.hashCode ^
+      androidToken.hashCode ^
+      refreshToken.hashCode ^
+      socialKey.hashCode ^
+      imageAvatar.hashCode ^
+      supplierId.hashCode;
 }

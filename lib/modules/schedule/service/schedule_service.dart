@@ -2,9 +2,9 @@ import 'package:cuidapet_api/entities/schedule.dart';
 import 'package:cuidapet_api/entities/schedule_supplier_service.dart';
 import 'package:cuidapet_api/entities/supplier.dart';
 import 'package:cuidapet_api/entities/supplier_service.dart';
-import 'package:cuidapet_api/modules/schedule/view_models/schedule_save_input_model.dart';
 import 'package:cuidapet_api/modules/schedule/data/i_schedule_repository.dart';
 import 'package:cuidapet_api/modules/schedule/service/i_schedule_service.dart';
+import 'package:cuidapet_api/modules/schedule/view_models/schedule_save_input_model.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: IScheduleService)

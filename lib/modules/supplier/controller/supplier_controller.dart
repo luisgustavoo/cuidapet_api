@@ -31,14 +31,13 @@ class SupplierController {
 
       final suppliers = await service.findNearByMe(lat, lng);
       final result = suppliers
-          .map((s) =>
-      {
-        'id': s.id,
-        'name': s.name,
-        'logo': s.logo,
-        'distance': s.distance,
-        'category': s.categoryId
-      })
+          .map((s) => {
+                'id': s.id,
+                'name': s.name,
+                'logo': s.logo,
+                'distance': s.distance,
+                'category': s.categoryId
+              })
           .toList();
 
       return Response.ok(jsonEncode(result));
@@ -69,20 +68,19 @@ class SupplierController {
   }
 
   @Route.get('/<supplierId|[0-9]+>/services')
-  Future<Response> findServicesBySupplierId(Request request,
-      String supplierId) async {
+  Future<Response> findServicesBySupplierId(
+      Request request, String supplierId) async {
     try {
       final supplierServices =
-      await service.findServicesBySupplier(int.parse(supplierId));
+          await service.findServicesBySupplier(int.parse(supplierId));
 
       final result = supplierServices
-          .map((s) =>
-      {
-        'id': s.id,
-        'name': s.name,
-        'supplier_id': s.supplierId,
-        'price': s.price
-      })
+          .map((s) => {
+                'id': s.id,
+                'name': s.name,
+                'supplier_id': s.supplierId,
+                'price': s.price
+              })
           .toList();
 
       return Response.ok(jsonEncode(result));
@@ -127,8 +125,8 @@ class SupplierController {
 
       if (supplier == null) {
         return Response(400,
-            body: jsonEncode(
-                {'message': 'Código fornecedor não pode ser nulo'}));
+            body:
+                jsonEncode({'message': 'Código fornecedor não pode ser nulo'}));
       }
 
       final model = SupplierUpdateInputModel(
@@ -137,12 +135,11 @@ class SupplierController {
       final supplierResponse = await service.update(model);
 
       return Response.ok(_supplierMapper(supplierResponse));
-      } on Exception catch (e, s)
-      {
-        log.error('Erro ao atualizar fornecedor', e, s);
-        return Response.internalServerError();
-      }
+    } on Exception catch (e, s) {
+      log.error('Erro ao atualizar fornecedor', e, s);
+      return Response.internalServerError();
     }
+  }
 
   String _supplierMapper(Supplier supplier) {
     return jsonEncode({

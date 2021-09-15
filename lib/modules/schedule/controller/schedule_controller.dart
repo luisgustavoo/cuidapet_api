@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:cuidapet_api/application/logs/i_logger.dart';
-import 'package:cuidapet_api/modules/schedule/view_models/schedule_save_input_model.dart';
 import 'package:cuidapet_api/modules/schedule/service/i_schedule_service.dart';
+import 'package:cuidapet_api/modules/schedule/view_models/schedule_save_input_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';

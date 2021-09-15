@@ -22,7 +22,7 @@ class ScheduleRepository implements IScheduleRepository {
 
     try {
       conn = await connection.openConnection();
-      await conn.transaction((Object _) async {
+      await conn.transaction((dynamic _) async {
 
         final result = await conn!.query('''
                            

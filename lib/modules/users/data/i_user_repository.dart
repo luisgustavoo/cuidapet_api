@@ -20,4 +20,5 @@ abstract class IUserRepository {
   Future<void> updateUrlAvatar(int userId, String urlAvatar);
 
   Future<void> updateDeviceToken(int userId, String token, Platform platform);
+
 }
