@@ -42,7 +42,7 @@ class UserRepository implements IUserRepository {
       return user.copyWith(id: userId);
     } on MySqlException catch (e, s) {
       if (e.message.contains('usuario.email_UNIQUE')) {
-        log.error('Usuario já cdastrado na base de dados', e, s);
+        log.error('Usuario já cadastrado na base de dados', e, s);
         throw UserExistsException();
       }
       log.error('Erro ao criar usuario', e, s);
