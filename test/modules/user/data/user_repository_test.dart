@@ -45,7 +45,7 @@ void main() {
         'img_avatar',
       ]);
 
-      (database as MockDatabaseConnection).mockQuery(mockResults);
+      database.mockQuery(mockResults);
 
       final userMap = jsonDecode(userFixtureDb) as Map<String, dynamic>;
 
@@ -79,7 +79,7 @@ void main() {
       final call = userRepository.findById;
       //Assert
       expect(call(id), throwsA(isA<UserNotFoundException>()));
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
+      await Future<dynamic>.delayed(const Duration(milliseconds: 200));
       database.verifyConnectionClose();
     });
 
@@ -87,7 +87,7 @@ void main() {
       // Arrange
       const id = 1;
       final mockResults = MockResults();
-      (database as MockDatabaseConnection).mockQuery(mockResults, [id]);
+      database.mockQuery(mockResults, [id]);
       //Act
       try {
         await userRepository.findById(id);
@@ -97,11 +97,11 @@ void main() {
         fail('Exception errada deveria retorna um UserNotFoundException');
       }
 
-      (database as MockDatabaseConnection).verifyConnectionClose();
+      database.verifyConnectionClose();
     });
   });
 
-  group('Group test create user', () {
+  group('Group test createUser', () {
     test('Should create user with success', () async {
       // Arrange
       const userId = 1;
@@ -123,6 +123,7 @@ void main() {
       final user = await userRepository.createUser(userInsert);
       //Assert
       expect(user, userExpected);
+      database.verifyConnectionClose();
     });
 
     test('Should throw DatabaseException', () async {
@@ -133,18 +134,94 @@ void main() {
       final call = userRepository.createUser;
       //Assert
       expect(call(User()), throwsA(isA<DatabaseException>()));
+      await Future<dynamic>.delayed(const Duration(milliseconds: 200));
+      database.verifyConnectionClose();
     });
 
     test('Should throw UserExistsException', () async {
       // Arrange
       final exception = MockMysqlException();
       when(() => exception.message).thenReturn('usuario.email_UNIQUE');
-      database.mockQueryException(exception);
+      database.mockQueryException(mockException: exception);
 
       //Act
       final call = userRepository.createUser;
       //Assert
       expect(call(User()), throwsA(isA<UserExistsException>()));
+      await Future<dynamic>.delayed(const Duration(milliseconds: 200));
+      database.verifyConnectionClose();
     });
+  });
+
+  group('Group test loginWithEmailPassword', () {
+    test('Should login with email and password', () async {
+      // Arrange
+      final userFixtureDB = FixtureReader.getJsonData(
+          'modules/user/data/fixture/login_with_email_password_success.json');
+      final mockResults = MockResults(userFixtureDB, [
+        'ios_token',
+        'android_token',
+        'refresh_token',
+        'img_avatar',
+      ]);
+      const email = 'luisgustavovieirasantos@gmail.com';
+      const password = '123123';
+      database.mockQuery(
+          mockResults, [email, CriptyHelper.generateSha256Hash(password)]);
+
+      final userMap = jsonDecode(userFixtureDB) as Map<String, dynamic>;
+
+      final userExpected = User(
+          id: int.tryParse(userMap['id'].toString()) ?? 0,
+          email: userMap['email'].toString(),
+          registerType: userMap['tipo_cadastro'].toString(),
+          iosToken: userMap['ios_token'].toString(),
+          androidToken: userMap['android_token'].toString(),
+          refreshToken: userMap['refresh_token'].toString(),
+          imageAvatar: userMap['img_avatar'].toString(),
+          supplierId: int.tryParse(userMap['fornecedor_id'].toString()) ?? 0);
+
+      //Act
+      final user = await userRepository.loginWithEmailPassword(email, password);
+
+      //Assert
+      expect(user, userExpected);
+    });
+
+    test(
+        'Should login with email and password and return exception UserNotFoundException',
+        () async {
+      // Arrange
+      const email = 'luisgustavovieirasantos@gmail.com';
+      const password = '123123';
+      database.mockQueryException(params: [email, CriptyHelper.generateSha256Hash(password)]);
+      //Act
+      final call = userRepository.loginWithEmailPassword;
+
+      //Assert
+      expect(call(email, password), throwsA(isA<DatabaseException>()));
+      await Future<dynamic>.delayed(const Duration(milliseconds: 200));
+      database.verifyConnectionClose();
+    });
+
+    test(
+        'Should login with email and password and return exception DatabaseException',
+            () async {
+          // Arrange
+          final userFixtureDB = FixtureReader.getJsonData(
+              'modules/user/data/fixture/login_with_email_password_success.json');
+          final mockResults = MockResults();
+          const email = 'luisgustavovieirasantos@gmail.com';
+          const password = '123123';
+          database.mockQuery(
+              mockResults, [email, CriptyHelper.generateSha256Hash(password)]);
+          //Act
+          final call = userRepository.loginWithEmailPassword;
+
+          //Assert
+          expect(call(email, password), throwsA(isA<UserNotFoundException>()));
+          await Future<dynamic>.delayed(const Duration(milliseconds: 200));
+          database.verifyConnectionClose();
+        });
   });
 }
