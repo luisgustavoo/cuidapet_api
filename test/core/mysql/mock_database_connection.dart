@@ -30,7 +30,12 @@ class MockDatabaseConnection extends Mock implements IDatabaseConnection {
         .thenThrow(exception!);
   }
 
-  void verifyConnectionClose() {
-    verify(mySqlConnection.close).called(1);
-  }
+  void verifyConnectionClose() => verify(mySqlConnection.close).called(1);
+
+  void verifyQueryCalled({int? called, List<Object>? params}) =>
+      verify(() => mySqlConnection.query(any(), params ?? any()))
+          .called(called ?? 1);
+
+  void verifyQueryNeverCalled({int? called, List<Object>? params}) =>
+      verifyNever(() => mySqlConnection.query(any(), params ?? any()));
 }

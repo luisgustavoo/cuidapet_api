@@ -101,11 +101,16 @@ class AuthController {
 
       final userRefreshToken = await userService.refreshToken(model);
 
-      return Response.ok(jsonEncode(<String, dynamic>{
-        'access_token': userRefreshToken.accessToken,
-        'refresh_token': userRefreshToken.refreshToken
-      }));
-    } on Exception {
+      return Response.ok(
+        jsonEncode(
+          <String, dynamic>{
+            'access_token': userRefreshToken.accessToken,
+            'refresh_token': userRefreshToken.refreshToken
+          },
+        ),
+      );
+    } on Exception catch (e, s) {
+      log.error('Erro ao confirmar login', e, s);
       return Response.internalServerError(
           body: jsonEncode({'message': 'Erro ao atualizar access token'}));
     }
